@@ -1130,7 +1130,7 @@
           },
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  MAX(time) AS time,\n  portnum AS metric,\n  COUNT(*) AS value\nFROM mesh_packet_metrics\nWHERE $__timeFilter(time)\n  AND source_id IN ($Nodes)\n  AND portnum IS NOT NULL\nGROUP BY portnum\nORDER BY COUNT(*) DESC",
+          "rawSql": "SELECT\n  MAX(time) AS time,\n  portnum AS metric,\n  COUNT(*) AS value\nFROM mesh_packet_metrics\nWHERE $__timeFilter(time)\n  AND source_id IN ($Nodes)\n  AND portnum IS NOT NULL\nGROUP BY portnum\nORDER BY 1",
           "refId": "A",
           "hide": false
         }
