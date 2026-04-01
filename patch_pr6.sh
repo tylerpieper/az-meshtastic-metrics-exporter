@@ -5,7 +5,7 @@
 
 set -e
 
-BASE_URL="https://raw.githubusercontent.com/tylerpieper/az-meshtastic-metrics-exporter/main"
+BASE_URL="https://raw.githubusercontent.com/logans-stuff/az-meshtastic-metrics-exporter/main"
 
 echo "=== Patching PR #6: reporting_gateway changes ==="
 
@@ -41,4 +41,4 @@ echo ""
 echo "=== Done! All 8 files patched. ==="
 echo ""
 echo "IMPORTANT: Run the database migration BEFORE restarting the exporter:"
-echo "  docker exec -i <timescaledb-container> psql -U postgres -d <db> < docker/timescaledb/002_reporting_gateway_migration.sql"
+echo "  wget -qO- ${BASE_URL}/docker/timescaledb/002_reporting_gateway_migration.sql | docker exec -i <timescaledb-container> psql -U postgres -d <db>"
