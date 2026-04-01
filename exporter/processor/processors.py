@@ -435,7 +435,6 @@ class TraceRouteAppProcessor(Processor):
             self.db_handler.update_traceroute_hops(
                 packet_id=mesh_packet.id,
                 source_id=str(getattr(mesh_packet, 'from')),
-                relay_node=relay_node,
                 route_towards=route_towards,
                 snr_towards=snr_towards,
                 route_back=route_back,
