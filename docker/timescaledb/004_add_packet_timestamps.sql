@@ -4,9 +4,11 @@
 --   message_timestamp: originating node's timestamp (epoch seconds from protobuf payload)
 -- Together these enable message-life analysis, mesh transit delay, and MQTT latency calculations.
 
--- Position metrics
+-- Position metrics: also add packet_id for deduplication across gateways
+ALTER TABLE position_metrics ADD COLUMN IF NOT EXISTS packet_id BIGINT;
 ALTER TABLE position_metrics ADD COLUMN IF NOT EXISTS rx_time BIGINT;
 ALTER TABLE position_metrics ADD COLUMN IF NOT EXISTS message_timestamp BIGINT;
+CREATE INDEX IF NOT EXISTS idx_position_metrics_packet_node ON position_metrics (packet_id, node_id);
 
 -- Device metrics
 ALTER TABLE device_metrics ADD COLUMN IF NOT EXISTS rx_time BIGINT;

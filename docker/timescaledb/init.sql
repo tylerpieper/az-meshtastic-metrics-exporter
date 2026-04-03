@@ -55,12 +55,14 @@ CREATE TABLE position_metrics (
     longitude INT,
     altitude INT,
     precision INT,
+    packet_id BIGINT,
     rx_time BIGINT,
     message_timestamp BIGINT,
     FOREIGN KEY (node_id) REFERENCES node_details (node_id)
 );
 SELECT create_hypertable('position_metrics', 'time');
 CREATE INDEX idx_position_metrics_node_id ON position_metrics (node_id, time DESC);
+CREATE INDEX idx_position_metrics_packet_node ON position_metrics (packet_id, node_id);
 
 CREATE TABLE IF NOT EXISTS node_neighbors
 (
