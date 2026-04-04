@@ -166,13 +166,14 @@ If you only need to apply the schema update manually, run:
 
 ```bash
 docker exec -i <timescaledb_container> psql -U postgres -d meshtastic \
-  -f /dev/stdin < docker/timescaledb/003_node_topic_channel_tracking.sql
+  -f /dev/stdin < docker/timescaledb/005_neighbor_info_history.sql
 ```
 
 To verify:
 
 ```bash
-docker exec -it <timescaledb_container> psql -U postgres -d meshtastic -c "\d+ node_details"
+docker exec -it <timescaledb_container> psql -U postgres -d meshtastic -c "\d+ node_neighbors"
+docker exec -it <timescaledb_container> psql -U postgres -d meshtastic -c "SELECT * FROM node_neighbors_latest LIMIT 5"
 ```
 
 ## Contributing
