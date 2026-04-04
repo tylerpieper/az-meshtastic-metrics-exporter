@@ -67,15 +67,32 @@ CREATE INDEX idx_position_metrics_packet_node ON position_metrics (packet_id, no
 CREATE TABLE IF NOT EXISTS node_neighbors
 (
     id          SERIAL PRIMARY KEY,
+    time        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     node_id     VARCHAR,
     neighbor_id VARCHAR,
     snr         FLOAT,
+    packet_id   BIGINT,
+    rx_time     BIGINT,
     FOREIGN KEY (node_id) REFERENCES node_details (node_id),
-    FOREIGN KEY (neighbor_id) REFERENCES node_details (node_id),
-    UNIQUE (node_id, neighbor_id)
+    FOREIGN KEY (neighbor_id) REFERENCES node_details (node_id)
 );
 
-CREATE UNIQUE INDEX idx_unique_node_neighbor ON node_neighbors (node_id, neighbor_id);
+CREATE INDEX idx_node_neighbors_node_time ON node_neighbors (node_id, time DESC);
+CREATE INDEX idx_node_neighbors_neighbor_time ON node_neighbors (neighbor_id, time DESC);
+CREATE INDEX idx_node_neighbors_pair_time ON node_neighbors (node_id, neighbor_id, time DESC);
+CREATE INDEX idx_node_neighbors_packet_id ON node_neighbors (packet_id);
+
+CREATE OR REPLACE VIEW node_neighbors_latest AS
+SELECT DISTINCT ON (node_id, neighbor_id)
+    id,
+    time,
+    node_id,
+    neighbor_id,
+    snr,
+    packet_id,
+    rx_time
+FROM node_neighbors
+ORDER BY node_id, neighbor_id, time DESC, id DESC;
 
 -- Create a table for node_configurations
 CREATE TABLE IF NOT EXISTS node_configurations

@@ -765,7 +765,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT \n    CONCAT(neighbor_id, '_', node_id) AS id,\n    neighbor_id AS \"source\",\n    node_id AS \"target\",\n    snr AS \"mainstat\",\n    CASE\n        WHEN snr < -13 THEN '#E74C3C'  -- Red for SNR < -13\n        WHEN snr < -7 THEN '#F4D03F'   -- Yellow for -13 ≤ SNR < -7\n        ELSE '#2ECC71'                 -- Green for SNR ≥ -7\n    END AS \"color\",\n    GREATEST(0.1, LEAST(2, 1 + ((snr + 13) / 10))) AS \"thickness\"\nFROM \n    node_neighbors\n    WHERE (neighbor_id IN (${nodeID:singlequote}) OR neighbor_id IN (${relatives:singlequote}))\n    AND (node_id IN (${nodeID:singlequote}) OR node_id IN (${relatives:singlequote}))",
+          "rawSql": "SELECT \n    CONCAT(neighbor_id, '_', node_id) AS id,\n    neighbor_id AS \"source\",\n    node_id AS \"target\",\n    snr AS \"mainstat\",\n    CASE\n        WHEN snr < -13 THEN '#E74C3C'  -- Red for SNR < -13\n        WHEN snr < -7 THEN '#F4D03F'   -- Yellow for -13 ≤ SNR < -7\n        ELSE '#2ECC71'                 -- Green for SNR ≥ -7\n    END AS \"color\",\n    GREATEST(0.1, LEAST(2, 1 + ((snr + 13) / 10))) AS \"thickness\"\nFROM \n    node_neighbors_latest\n    WHERE (neighbor_id IN (${nodeID:singlequote}) OR neighbor_id IN (${relatives:singlequote}))\n    AND (node_id IN (${nodeID:singlequote}) OR node_id IN (${relatives:singlequote}))",
           "refId": "edges",
           "sql": {
             "columns": [
@@ -819,7 +819,7 @@
             ],
             "limit": 50
           },
-          "table": "node_neighbors"
+          "table": "node_neighbors_latest"
         }
       ],
       "title": "Node Graph",
@@ -1968,7 +1968,7 @@
           "type": "postgres",
           "uid": "PA942B37CCFAF5A81"
         },
-        "definition": "SELECT \n    neighbor_id AS \"source\",\n    node_id AS \"target\"\nFROM \n    node_neighbors\nWHERE node_id = ${nodeID:singlequote} OR neighbor_id = ${nodeID:singlequote}",
+        "definition": "SELECT \n    neighbor_id AS \"source\",\n    node_id AS \"target\"\nFROM \n    node_neighbors_latest\nWHERE node_id = ${nodeID:singlequote} OR neighbor_id = ${nodeID:singlequote}",
         "description": "",
         "hide": 2,
         "includeAll": false,
@@ -1976,7 +1976,7 @@
         "multi": false,
         "name": "relatives",
         "options": [],
-        "query": "SELECT \n    neighbor_id AS \"source\",\n    node_id AS \"target\"\nFROM \n    node_neighbors\nWHERE node_id = ${nodeID:singlequote} OR neighbor_id = ${nodeID:singlequote}",
+        "query": "SELECT \n    neighbor_id AS \"source\",\n    node_id AS \"target\"\nFROM \n    node_neighbors_latest\nWHERE node_id = ${nodeID:singlequote} OR neighbor_id = ${nodeID:singlequote}",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,

@@ -192,7 +192,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT DISTINCT\n    cd.node_id AS \"id\",\n    cd.long_name AS \"title\",\n    cd.hardware_model AS \"detail__Hardware Detail\",\n    cd.role AS \"detail__Client Role\",\n    cd.mqtt_status AS \"detail__MQTT Status\",\n    cd.short_name AS \"subtitle\",\n    cd.longitude * 1e-7 AS \"longitude\",\n    cd.latitude * 1e-7 AS \"latitude\"\nFROM\n    node_details cd\nLEFT JOIN (\n    SELECT node_id FROM node_neighbors\n    UNION\n    SELECT neighbor_id FROM node_neighbors\n) nn ON cd.node_id = nn.node_id\nWHERE nn.node_id IS NOT NULL",
+          "rawSql": "SELECT DISTINCT\n    cd.node_id AS \"id\",\n    cd.long_name AS \"title\",\n    cd.hardware_model AS \"detail__Hardware Detail\",\n    cd.role AS \"detail__Client Role\",\n    cd.mqtt_status AS \"detail__MQTT Status\",\n    cd.short_name AS \"subtitle\",\n    cd.longitude * 1e-7 AS \"longitude\",\n    cd.latitude * 1e-7 AS \"latitude\"\nFROM\n    node_details cd\nLEFT JOIN (\n    SELECT node_id FROM node_neighbors_latest\n    UNION\n    SELECT neighbor_id FROM node_neighbors_latest\n) nn ON cd.node_id = nn.node_id\nWHERE nn.node_id IS NOT NULL",
           "refId": "nodes",
           "sql": {
             "columns": [
@@ -278,7 +278,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT \n    CONCAT(neighbor_id, '_', node_id) AS id,\n    neighbor_id AS \"source\",\n    node_id AS \"target\",\n    snr AS \"mainstat\",\n    CASE\n        WHEN snr < -13 THEN '#E74C3C'  -- Red for SNR < -13\n        WHEN snr < -7 THEN '#F4D03F'   -- Yellow for -13 ≤ SNR < -7\n        ELSE '#2ECC71'                 -- Green for SNR ≥ -7\n    END AS \"color\",\n    GREATEST(0.1, LEAST(2, 1 + ((snr + 13) / 10))) AS \"thickness\"\nFROM \n    node_neighbors",
+          "rawSql": "SELECT \n    CONCAT(neighbor_id, '_', node_id) AS id,\n    neighbor_id AS \"source\",\n    node_id AS \"target\",\n    snr AS \"mainstat\",\n    CASE\n        WHEN snr < -13 THEN '#E74C3C'  -- Red for SNR < -13\n        WHEN snr < -7 THEN '#F4D03F'   -- Yellow for -13 ≤ SNR < -7\n        ELSE '#2ECC71'                 -- Green for SNR ≥ -7\n    END AS \"color\",\n    GREATEST(0.1, LEAST(2, 1 + ((snr + 13) / 10))) AS \"thickness\"\nFROM \n    node_neighbors_latest",
           "refId": "edges",
           "sql": {
             "columns": [
@@ -332,7 +332,7 @@
             ],
             "limit": 50
           },
-          "table": "node_neighbors"
+          "table": "node_neighbors_latest"
         }
       ],
       "title": "Node Graph (Map)",
