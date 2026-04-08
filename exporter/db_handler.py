@@ -231,13 +231,14 @@ class DBHandler:
                 conn.commit()
 
     def update_traceroute_hops(self, packet_id: int, source_id: str,
-                               route_towards: list, snr_towards: list,
-                               route_back: list, snr_back: list):
+                               reporting_gateway: Optional[str] = None,
+                               route_towards: Optional[list] = None, snr_towards: Optional[list] = None,
+                               route_back: Optional[list] = None, snr_back: Optional[list] = None):
         """Update mesh_packet_metrics with traceroute RouteDiscovery hop data"""
         with self.db_pool.connection() as conn:
             with conn.cursor() as cur:
                 # Ensure all hop nodes exist in node_details
-                for hop_node_id in list(route_towards) + list(route_back):
+                for hop_node_id in list(route_towards or []) + list(route_back or []):
                     hop_node_id_str = str(hop_node_id)
                     cur.execute("SELECT 1 FROM node_details WHERE node_id = %s", (hop_node_id_str,))
                     if not cur.fetchone():
@@ -247,7 +248,7 @@ class DBHandler:
                             ON CONFLICT (node_id) DO NOTHING
                         """, (hop_node_id_str, 'Unknown', 'Unknown'))
 
-                cur.execute("""
+                query = """
                     UPDATE mesh_packet_metrics
                     SET route_towards = %s,
                         snr_towards = %s,
@@ -255,14 +256,24 @@ class DBHandler:
                         snr_back = %s
                     WHERE packet_id = %s AND source_id = %s
                       AND portnum = 'TRACEROUTE_APP'
-                """, (
+                """
+
+                params = [
                     route_towards or None,
                     snr_towards or None,
                     route_back or None,
                     snr_back or None,
                     packet_id,
                     source_id
-                ))
+                ]
+
+                if reporting_gateway is not None:
+                    query += " AND reporting_gateway = %s"
+                    params.append(reporting_gateway)
+                else:
+                    query += " AND reporting_gateway IS NULL"
+
+                cur.execute(query, tuple(params))
                 conn.commit()
 
     def get_latest_metrics(self, node_id: str) -> Dict[str, Any]:
